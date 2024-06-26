@@ -1,0 +1,18 @@
+{
+  "name": "rocketseat-fullstack-final-api",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --watch src/server.ts"
+  },
+  "repository": "git@github.com:AmadeuGMeniconiDeveloper/rocketseat-fullstack-final-api.git",
+  "author": "AmadeuGMeniconiDeveloper",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5.2"
+  }
+}
