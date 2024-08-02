@@ -1,7 +1,6 @@
 import { Response, NextFunction } from "express";
-import { FavoriteDTO, FavoritesListDTO } from "../dto.types.js";
 import { FavoriteService } from "../services/favoriteService.js";
-import { AuthenticatedRequest } from "../middleware/types.js";
+import { AuthenticatedRequest } from "../types.js";
 
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
@@ -12,13 +11,14 @@ export class FavoriteController {
     next: NextFunction
   ) => {
     const sessionUser: typeof req.sessionUser = req.sessionUser;
+
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const favorites = await this.favoriteService.getFavorites(sessionUser.sub);
 
-    return res.status(201).json({ data: favorites });
+    return res.status(201).json(favorites);
   };
 
   toggleFavorite = async (
@@ -26,39 +26,38 @@ export class FavoriteController {
     res: Response,
     next: NextFunction
   ) => {
-    const { favoriteProductId }: FavoriteDTO = { ...req.body };
+    const { favoriteProductId } = req.params;
     const sessionUser: typeof req.sessionUser = req.sessionUser;
+
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    await this.favoriteService.toggleFavorite(
+    const favoriteIdList = await this.favoriteService.toggleFavorite(
       favoriteProductId,
       sessionUser.sub
     );
 
-    return res.status(201).json({ message: "Favorite toggled" });
+    return res.status(201).json(favoriteIdList);
   };
 
-  updateFavorites = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { favoriteProductIdList }: FavoritesListDTO = {
-      ...req.body,
-    };
-    const sessionUser: typeof req.sessionUser = req.sessionUser;
-    if (!sessionUser) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+  // updateFavorites = async (
+  //   req: AuthenticatedRequest,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   const favoriteProductIdList: string[] = req.body;
+  //   const sessionUser: typeof req.sessionUser = req.sessionUser;
 
-    console.log("FavoritesListDTO: ", favoriteProductIdList, sessionUser);
-    await this.favoriteService.updateFavorites(
-      favoriteProductIdList,
-      sessionUser.sub
-    );
+  //   if (!sessionUser) {
+  //     return res.status(401).json({ message: "Unauthorized" });
+  //   }
 
-    return res.status(201).json({ message: "Favorites updated" });
-  };
+  //   await this.favoriteService.updateFavorites(
+  //     favoriteProductIdList,
+  //     sessionUser.sub
+  //   );
+
+  //   return res.status(201).json({ message: "Favorites updated" });
+  // };
 }

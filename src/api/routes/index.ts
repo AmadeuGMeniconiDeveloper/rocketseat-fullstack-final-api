@@ -9,9 +9,17 @@ import SessionRoutes from "./session.routes.js";
 const apiRoutes = Router();
 
 apiRoutes.use("/users", userRoutes);
+
 apiRoutes.use("/favorites", favoriteRoutes);
+
 apiRoutes.use("/products", productRoutes);
+
 apiRoutes.use("/cartItems", cartItemRoutes);
+
 apiRoutes.use("/sessions", SessionRoutes);
+
+apiRoutes.all("*", () => {
+  throw new Error("Route not found");
+});
 
 export default apiRoutes;

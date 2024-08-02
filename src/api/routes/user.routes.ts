@@ -12,6 +12,7 @@ const userController = new UserController(userService);
 const userRoutes = Router();
 
 userRoutes.post("/", userController.create);
-userRoutes.delete("/", jwtAuthenticator, userController.delete);
+
+userRoutes.delete("/:id", jwtAuthenticator, userController.delete);
 
 export default userRoutes;

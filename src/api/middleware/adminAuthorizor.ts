@@ -1,20 +1,17 @@
 import { NextFunction, Response } from "express";
-import AppError from "../../utils/AppError.js";
+import AppError from "../../errors/AppErrors.js";
 import authConfig from "../../config/authentication.js";
 import jwt from "jsonwebtoken";
 const { verify } = jwt;
 
-import { AuthenticationHeaderDTO } from "../dto.types.js";
-import { AuthenticatedRequest, CustomJwtPayload } from "./types.js";
+import { AuthenticatedRequest, CustomJwtPayload } from "../types.js";
 
 function adminAuthorizor(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
-  console.log("ENTERED roleAuthorizor...");
-  const authorizationHeader: AuthenticationHeaderDTO["authorizationHeader"] =
-    req.headers.authorization;
+  const authorizationHeader: string | undefined = req.headers.authorization;
 
   if (!authorizationHeader) {
     console.error("jwtAuthenticator Error: Token missing");
@@ -31,14 +28,13 @@ function adminAuthorizor(
 
     // Authentication by role
     if (req.sessionUser.role !== "admin") {
-      console.error("roleAuthorizor Error: Admin privilage only");
-      throw new AppError(401, "Admin privilage only");
+      console.error("adminAuthorizor Error: Unauthorized");
+      throw new AppError(401, "Unauthorized");
     }
 
-    console.log("EXITED roleAuthorizor...");
     return next();
   } catch {
-    console.error("roleAuthorizor Error: Invalid token");
+    console.error("adminAuthorizor Error: Invalid token");
     throw new AppError(401, "Invalid token");
   }
 }

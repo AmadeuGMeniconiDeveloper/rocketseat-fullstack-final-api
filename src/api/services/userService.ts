@@ -1,10 +1,9 @@
-import AppError from "../../utils/AppError.js";
+import AppError from "../../errors/AppErrors.js";
 
 import { UserRepository } from "../repositories/userRepository.js";
 
 import User from "../models/User.js";
 
-import { UserDTO, SignUpDTO, SignInDTO } from "../dto.types.js";
 import { compare, hash } from "bcrypt";
 
 import authConfig from "../../config/authentication.js";
@@ -13,7 +12,12 @@ import jwt from "jsonwebtoken";
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  signUpUser = async (userSignUpData: SignUpDTO): Promise<void> => {
+  signUpUser = async (userSignUpData: {
+    name: string;
+    email: string;
+    password: string;
+    role: "customer" | "admin";
+  }): Promise<void> => {
     if (!userSignUpData.name) {
       console.error("Missing name field");
       throw new AppError(400, "Missing name field");
@@ -52,8 +56,8 @@ export class UserService {
     return await this.userRepository.add(newUser);
   };
 
-  deleteUser = async (email: UserDTO["email"]): Promise<void> => {
-    const foundUser = await this.userRepository.findByEmail(email);
+  deleteUser = async (id: string): Promise<void> => {
+    const foundUser = await this.userRepository.findById(Number(id));
 
     if (!foundUser) {
       console.error("User does't exist");
@@ -63,17 +67,18 @@ export class UserService {
     return await this.userRepository.remove(foundUser.dataValues.id);
   };
 
-  signInUser = async (
-    signInDTO: SignInDTO
-  ): Promise<{
-    user: { name: string; email: string; role: string };
+  signInUser = async (signInDTO: {
+    email: string;
+    password: string;
+  }): Promise<{
+    user: { name: string; email: string; role: User["role"] };
     token: string;
   }> => {
     const foundUser = await this.userRepository.findByEmail(signInDTO.email);
 
     if (!foundUser) {
       console.error("User does't exist");
-      throw new AppError(404, "User does't exist");
+      throw new AppError(401, "Wrong email or password");
     }
 
     const checkPassword = await compare(
@@ -83,7 +88,7 @@ export class UserService {
 
     if (!checkPassword) {
       console.error("Wrong password");
-      throw new AppError(401, "Wrong password");
+      throw new AppError(401, "Wrong email or password");
     }
 
     const { secret, expiresIn } = authConfig.jwt;
@@ -100,6 +105,7 @@ export class UserService {
     }
 
     const userResponseDTO = {
+      id: foundUser.dataValues.id,
       name: foundUser.dataValues.name,
       email: foundUser.dataValues.email,
       role: foundUser.dataValues.role,

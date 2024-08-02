@@ -11,10 +11,22 @@ const cartItemController = new CartItemController(cartItemService);
 
 const cartItemRoutes = Router();
 
-cartItemRoutes.get("/", jwtAuthenticator, cartItemController.getCartItems);
+cartItemRoutes.get("/all", jwtAuthenticator, cartItemController.getCartItems);
+
 cartItemRoutes.post("/", jwtAuthenticator, cartItemController.addCartItem);
-cartItemRoutes.patch("/", jwtAuthenticator, cartItemController.updateQuantity);
-cartItemRoutes.delete("/", jwtAuthenticator, cartItemController.removeCartItem);
+
+cartItemRoutes.patch(
+  "/:cartItemProductId",
+  jwtAuthenticator,
+  cartItemController.updateQuantity
+);
+
+cartItemRoutes.delete(
+  "/:id",
+  jwtAuthenticator,
+  cartItemController.removeCartItem
+);
+
 cartItemRoutes.post(
   "/checkout",
   jwtAuthenticator,

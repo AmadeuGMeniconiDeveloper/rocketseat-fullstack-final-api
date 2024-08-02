@@ -3,10 +3,10 @@ import Favorite from "../models/Favorite.js";
 export class FavoriteRepository {
   private readonly favorite = Favorite;
 
-  add = async (productId: string, userId: string): Promise<void> => {
+  add = async (productId: number, userId: number): Promise<void> => {
     const newFavorite: Favorite["dataValues"] = {
-      productId: Number(productId),
-      userId: Number(userId),
+      productId,
+      userId,
     };
 
     try {
@@ -16,21 +16,21 @@ export class FavoriteRepository {
     }
   };
 
-  remove = async (productId: string, userId: string): Promise<void> => {
+  remove = async (productId: number, userId: number): Promise<void> => {
     try {
       await this.favorite.destroy({
-        where: { productId: Number(productId), userId: Number(userId) },
+        where: { productId, userId },
       });
     } catch (error) {
       console.error(error);
     }
   };
 
-  update = async (productIds: string[], userId: string): Promise<void> => {
+  update = async (productIds: number[], userId: number): Promise<void> => {
     const updatedFavorites: Favorite["dataValues"][] = productIds.map(
       productId => ({
-        productId: Number(productId),
-        userId: Number(userId),
+        productId: productId,
+        userId: userId,
       })
     );
 
@@ -45,16 +45,18 @@ export class FavoriteRepository {
     }
   };
 
-  findByUserId = async (userId: string): Promise<Favorite[]> => {
+  findByUserId = async (userId: number): Promise<Favorite[]> => {
     const favorites = await this.favorite.findAll({
-      where: { userId: Number(userId) },
+      where: { userId },
+      attributes: ["productId"],
+      order: [["createdAt", "DESC"]],
     });
     return favorites;
   };
 
-  findByProductId = async (productId: string): Promise<Favorite | null> => {
+  findByProductId = async (productId: number): Promise<Favorite | null> => {
     const favorite = await this.favorite.findOne({
-      where: { productId: Number(productId) },
+      where: { productId: productId },
     });
 
     return favorite;

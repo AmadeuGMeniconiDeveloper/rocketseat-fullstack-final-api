@@ -3,28 +3,8 @@ import Favorite from "../api/models/Favorite.js";
 import Product from "../api/models/Product.js";
 import User from "../api/models/User.js";
 
-// Define associations
 export const defineAssociations = () => {
-  // Product.belongsTo(Favorite, {
-  //   onDelete: "CASCADE",
-  //   onUpdate: "CASCADE",
-  //   foreignKey: "productId",
-  // });
-  // Favorite.belongsTo(User, {
-  //   onDelete: "CASCADE",
-  //   onUpdate: "CASCADE",
-  //   foreignKey: "userId",
-  // });
-  // User.hasMany(CartItem, {
-  //   onDelete: "CASCADE",
-  //   onUpdate: "CASCADE",
-  //   foreignKey: "userId",
-  // });
-  // CartItem.belongsTo(User, {
-  //   onDelete: "CASCADE",
-  //   onUpdate: "CASCADE",
-  //   foreignKey: "userId",
-  // });
+  // User to Favorite
   User.hasMany(Favorite, {
     foreignKey: "userId",
     onDelete: "CASCADE",

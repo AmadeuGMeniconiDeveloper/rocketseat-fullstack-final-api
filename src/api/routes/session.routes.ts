@@ -10,6 +10,8 @@ const sessionController = new SessionController(userService);
 
 const SessionRoutes = Router();
 
-SessionRoutes.post("/", sessionController.signInUser);
+SessionRoutes.post("/signin", sessionController.signInUser);
+
+SessionRoutes.post("/signout", sessionController.signOutUser);
 
 export default SessionRoutes;

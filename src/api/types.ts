@@ -13,6 +13,6 @@ export interface CustomJwtPayload extends JwtPayload {
   sub: string;
 }
 
-// export interface FileRequest extends Request {
-//   file: Express.Multer.File;
-// }
+export interface FileRequest extends AuthenticatedRequest {
+  file: Express.Multer.File;
+}

@@ -1,4 +1,4 @@
-import AppError from "../../utils/AppError.js";
+import AppError from "../../errors/AppErrors.js";
 import User from "../models/User.js";
 
 export class UserRepository {

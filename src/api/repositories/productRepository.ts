@@ -11,20 +11,22 @@ export class ProductRepository {
     ingredients: string[],
     description?: string,
     image?: string
-  ): Promise<void> => {
+  ): Promise<Product | null> => {
     const newProduct: Product["dataValues"] = {
       name,
       price,
       description,
-      category: category,
+      category,
       ingredients,
       image,
     };
 
     try {
-      await this.product.create(newProduct);
+      const product = await this.product.create(newProduct);
+      return product;
     } catch (error) {
       console.error(error);
+      return null;
     }
   };
 
@@ -34,21 +36,47 @@ export class ProductRepository {
     });
   };
 
-  findByFavoriteIds = async (
-    favoritesProductIdList: number[]
-  ): Promise<Product[]> => {
+  findByIdList = async (idList: number[]): Promise<Product[]> => {
     const products = await this.product.findAll({
       where: {
-        id: { [Op.in]: favoritesProductIdList },
+        id: { [Op.in]: idList },
       },
+      order: [["name", "ASC"]],
     });
 
     return products;
   };
 
-  findByName = async (name: string): Promise<Product | null> => {
+  findByExactName = async (name: string): Promise<Product | null> => {
     const product = await this.product.findOne({
-      where: { name },
+      where: { name: name },
+    });
+
+    return product;
+  };
+
+  findByName = async (name: string): Promise<Product[]> => {
+    const product = await this.product.findAll({
+      where: {
+        name: { [Op.iLike]: `${name}%` },
+      },
+      order: [["name", "ASC"]],
+    });
+
+    return product;
+  };
+
+  findByNameOrIngredients = async (input: string): Promise<Product[]> => {
+    const product = await this.product.findAll({
+      where: {
+        [Op.or]: [
+          { ingredients: { [Op.overlap]: [input] } },
+          {
+            name: { [Op.iLike]: `${input}%` },
+          },
+        ],
+      },
+      order: [["name", "ASC"]],
     });
 
     return product;
@@ -67,13 +95,24 @@ export class ProductRepository {
   ): Promise<Product[]> => {
     const products = await this.product.findAll({
       where: { category },
+      order: [["name", "ASC"]],
     });
 
     return products;
   };
 
   findAll = async (): Promise<Product[]> => {
-    const products = await this.product.findAll();
+    const products = await this.product.findAll({ order: [["name", "ASC"]] });
     return products;
+  };
+
+  //#CHECK/LOGIC: This method is too crude. Can be improved.
+  update = async (product: Product["dataValues"]): Promise<Product[]> => {
+    const [affectedCount, affectedRows] = await this.product.update(product, {
+      where: { id: product.id },
+      returning: true,
+    });
+
+    return affectedRows;
   };
 }

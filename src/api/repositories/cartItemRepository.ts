@@ -1,18 +1,17 @@
-import { CartItemtDTO } from "../dto.types.js";
 import CartItem from "../models/CartItem.js";
 
 export class CartItemRepository {
   private readonly cartItem = CartItem;
 
   add = async (
-    productId: string,
-    userId: string,
+    productId: number,
+    userId: number,
     quantity: number
   ): Promise<void> => {
     try {
       await this.cartItem.create({
-        productId: Number(productId),
-        userId: Number(userId),
+        productId: productId,
+        userId: userId,
         quantity,
       });
     } catch (error) {
@@ -20,20 +19,20 @@ export class CartItemRepository {
     }
   };
 
-  remove = async (productId: string, userId: string): Promise<void> => {
+  remove = async (productId: number, userId: number): Promise<void> => {
     try {
       await this.cartItem.destroy({
-        where: { productId: Number(productId), userId: Number(userId) },
+        where: { productId: productId, userId: userId },
       });
     } catch (error) {
       console.error(error);
     }
   };
 
-  removeByUserId = async (userId: string): Promise<void> => {
+  removeByUserId = async (userId: number): Promise<void> => {
     try {
       await this.cartItem.destroy({
-        where: { userId: Number(userId) },
+        where: { userId: userId },
       });
     } catch (error) {
       console.error(error);
@@ -41,39 +40,41 @@ export class CartItemRepository {
   };
 
   updateQuantity = async (
-    userId: string,
-    productId: string,
+    userId: number,
+    productId: number,
     quantity: number
   ): Promise<void> => {
+    console.log(quantity);
     try {
       await this.cartItem.update(
         { quantity },
-        { where: { productId: Number(productId), userId: Number(userId) } }
+        { where: { productId: productId, userId: userId } }
       );
     } catch (error) {
-      console.error(error);
+      console.error("Error updating quantity: ", error);
     }
   };
 
   findOne = async (
-    productId: string,
-    userId: string
+    productId: number,
+    userId: number
   ): Promise<CartItem | null> => {
     const cartItem = await this.cartItem.findOne({
-      where: { productId: Number(productId), userId: Number(userId) },
+      where: { productId: productId, userId: userId },
     });
 
     return cartItem;
   };
 
-  findByUserId = async (userId: string): Promise<CartItem[]> => {
+  findByUserId = async (userId: number): Promise<CartItem[]> => {
     const cartItems = await this.cartItem.findAll({
-      where: { userId: Number(userId) },
+      where: { userId: userId },
+      order: [["createdAt", "DESC"]],
     });
     return cartItems;
   };
 
-  submitCartItems = async (userId: string): Promise<void> => {
+  submitCartItems = async (userId: number): Promise<void> => {
     // DO: Implement submitCartItems
   };
 }

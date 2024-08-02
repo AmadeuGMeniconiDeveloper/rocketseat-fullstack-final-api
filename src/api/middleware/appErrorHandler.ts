@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import AppError from "../../utils/AppError.js";
+import AppError from "../../errors/AppErrors.js";
 
-function appErrorHandler(
+function errorHandler(
   error: unknown,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  console.log("ENTERED appErrorHandler...");
+  console.log("ENTERED errorHandler() ...");
   if (error instanceof AppError) {
     return res.status(error.status).json({ message: error.message });
   }
-  console.log("EXITED appErrorHandler...");
+  console.error(error);
+  console.log("EXITED errorHandler() ...");
   return res.status(500).json(error);
 }
 
-export default appErrorHandler;
+export default errorHandler;

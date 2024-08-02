@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import { sequelizeDatabase } from "../../database/index.js";
 
 interface CartItemAttributes {
-  productId?: number;
+  productId: number;
   userId: number;
   quantity: number;
   updatedAt?: Date;

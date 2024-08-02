@@ -1,7 +1,6 @@
 import { Response, NextFunction } from "express";
 import { CartItemService } from "../services/cartItemService.js";
-import { CartItemtDTO } from "../dto.types.js";
-import { AuthenticatedRequest } from "../middleware/types.js";
+import { AuthenticatedRequest } from "../types.js";
 
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
@@ -11,17 +10,21 @@ export class CartItemController {
     res: Response,
     next: NextFunction
   ) => {
-    const cartItemDTO: CartItemtDTO = { ...req.body };
+    const cartItemDTO: {
+      productId: string;
+      quantity: string;
+    } = req.body;
     const sessionUser: typeof req.sessionUser = req.sessionUser;
+
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     await this.cartItemService.addCartItem(cartItemDTO, sessionUser.sub);
 
-    return res
-      .status(201)
-      .json({ message: "Cart item added or quantity updated" });
+    const cartItems = await this.cartItemService.getCartItems(sessionUser.sub);
+
+    return res.status(201).json(cartItems);
   };
 
   getCartItems = async (
@@ -30,13 +33,14 @@ export class CartItemController {
     next: NextFunction
   ) => {
     const sessionUser: typeof req.sessionUser = req.sessionUser;
+
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const cartItems = await this.cartItemService.getCartItems(sessionUser.sub);
 
-    return res.status(201).json({ data: cartItems });
+    return res.status(201).json(cartItems);
   };
 
   removeCartItem = async (
@@ -44,15 +48,18 @@ export class CartItemController {
     res: Response,
     next: NextFunction
   ) => {
-    const cartItemDTO: CartItemtDTO = { ...req.body };
+    const { id } = req.params;
+
     const sessionUser: typeof req.sessionUser = req.sessionUser;
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    await this.cartItemService.removeCartItem(cartItemDTO, sessionUser.sub);
+    await this.cartItemService.removeCartItem(id, sessionUser.sub);
 
-    return res.status(201).json({ message: "Cart item removed" });
+    const cartItems = await this.cartItemService.getCartItems(sessionUser.sub);
+
+    return res.status(201).json(cartItems);
   };
 
   updateQuantity = async (
@@ -60,7 +67,10 @@ export class CartItemController {
     res: Response,
     next: NextFunction
   ) => {
-    const cartItemDTO: CartItemtDTO = { ...req.body };
+    const cartItemDTO: {
+      productId: string;
+      quantity: string;
+    } = req.body;
     const sessionUser: typeof req.sessionUser = req.sessionUser;
     if (!sessionUser) {
       return res.status(401).json({ message: "Unauthorized" });
