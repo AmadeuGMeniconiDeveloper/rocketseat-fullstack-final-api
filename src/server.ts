@@ -17,14 +17,7 @@ const app = express();
 const startServer = async () => {
   connectDatabase({});
 
-  app.use(
-    cors({
-      origin: [
-        "http://localhost:5173",
-        "https://main--foodexplorer-final.netlify.app",
-      ],
-    })
-  );
+  app.use(cors());
   app.use(express.json());
   app.use(morgan("dev"));
 
