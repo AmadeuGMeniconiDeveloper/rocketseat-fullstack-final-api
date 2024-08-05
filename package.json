@@ -2,11 +2,13 @@
   "name": "rocketseat-fullstack-final-api",
   "version": "0.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node --loader ts-node/esm src/server.ts",
-    "watch": "nodemon --exec 'node --loader ts-node/esm' src/server.ts"
+    "runtime": "tsc && pm2-runtime start ecosystem.config.cjs --env test",
+    "start": "pm2 start build/server.js --watch",
+    "stop": "pm2 stop build/server.js --watch ",
+    "dev": "nodemon --exec 'node --loader ts-node/esm' src/server.ts"
   },
   "repository": "git@github.com:AmadeuGMeniconiDeveloper/rocketseat-fullstack-final-api.git",
   "author": "AmadeuGMeniconiDeveloper",
@@ -36,9 +38,9 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.12.0",
+    "pm2": "^5.4.2",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.3",
-    "sequelize-typescript": "^2.1.6",
-    "ts-node-dev": "^2.0.0"
+    "sequelize-typescript": "^2.1.6"
   }
 }
