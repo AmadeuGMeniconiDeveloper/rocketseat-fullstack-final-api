@@ -15,19 +15,19 @@ dotenv.config({ path: resolveEnvironmentPath(import.meta.url) });
 const app = express();
 
 const startServer = async () => {
-  connectDatabase({ alter: true });
+  connectDatabase({});
 
-  app.use(cors());
+  app.use(cors({ origin: "http://localhost:5173" }));
   app.use(express.json());
   app.use(morgan("dev"));
 
-  app.use("/files", express.static("temp/uploads"));
-
   app.use("/", apiRoutes);
+
+  app.use("/files", express.static("temp/uploads"));
 
   app.use(errorHandler);
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 9000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
