@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "rocketseat-fullstack-final-api",
       script: "build/server.js",
-      instances: 1,
+      instances: "max",
       // env: {
       //   NODE_ENV: "test",
       //   PORT: 3000,
