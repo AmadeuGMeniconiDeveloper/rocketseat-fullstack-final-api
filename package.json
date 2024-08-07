@@ -6,8 +6,6 @@
   "scripts": {
     "build": "tsc",
     "runtime": "tsc && pm2-runtime start ecosystem.config.cjs",
-    "start": "pm2 start build/server.js --watch",
-    "stop": "pm2 stop build/server.js --watch ",
     "dev": "nodemon --exec 'node --loader ts-node/esm' src/server.ts"
   },
   "repository": "git@github.com:AmadeuGMeniconiDeveloper/rocketseat-fullstack-final-api.git",
