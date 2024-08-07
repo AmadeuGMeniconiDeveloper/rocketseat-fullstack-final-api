@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { response, Response } from "express";
 import { UserService } from "../services/userService.js";
 import { AuthenticatedRequest } from "../types.js";
 
@@ -9,12 +9,21 @@ export class SessionController {
     const signInDTO: { email: string; password: string } = req.body;
     const { user, token } = await this.userService.signInUser(signInDTO);
 
-    return res.status(200).json({ user, token });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 1000 * 60 * 15,
+    });
+
+    console.log("Cookie: ", response.cookie);
+
+    return res.status(200).json({ user });
   };
 
   signOutUser = async (req: AuthenticatedRequest, res: Response) => {
     req.sessionUser = undefined;
 
-    return res.status(200).json(null);
+    return res.status(200).json({ message: "User signed out" });
   };
 }

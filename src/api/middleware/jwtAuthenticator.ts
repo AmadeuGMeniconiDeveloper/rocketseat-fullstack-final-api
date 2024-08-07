@@ -11,15 +11,15 @@ function jwtAuthenticator(
   res: Response,
   next: NextFunction
 ) {
-  const authorizationHeader: string | undefined = req.headers.authorization;
+  const authorizationHeader: typeof req.headers = req.headers;
 
-  if (!authorizationHeader) {
+  if (!authorizationHeader.cookie) {
     console.error("jwtAuthenticator Error: Token missing");
     throw new AppError(401, "Token missing");
   }
 
   // Authorization: Bearer <token>
-  const [prefix, sessionToken] = authorizationHeader.split(" ");
+  const [prefix, sessionToken] = authorizationHeader.cookie.split("token=");
 
   try {
     const payload = verify(sessionToken, authConfig.jwt.secret);

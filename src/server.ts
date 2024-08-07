@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 import apiRoutes from "./api/routes/index.js";
 
@@ -17,9 +18,19 @@ const app = express();
 const startServer = async () => {
   connectDatabase({});
 
-  app.use(cors());
   app.use(express.json());
   app.use(morgan("dev"));
+  app.use(cookieParser());
+  app.use(
+    cors({
+      origin: [
+        "https://foodexplorer-final.netlify.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+      ],
+      credentials: true,
+    })
+  );
 
   app.use("/files", express.static("temp/uploads"));
   app.use("/", apiRoutes);
