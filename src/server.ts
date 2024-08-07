@@ -21,9 +21,8 @@ const startServer = async () => {
   app.use(express.json());
   app.use(morgan("dev"));
 
-  app.use("/", apiRoutes);
-
   app.use("/files", express.static("temp/uploads"));
+  app.use("/", apiRoutes);
 
   app.use(errorHandler);
 
