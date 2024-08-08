@@ -32,9 +32,19 @@ export class ProductController {
   };
 
   getProducts = async (req: AuthenticatedRequest, res: Response) => {
-    const products = await this.productService.getProducts();
+    const all = await this.productService.getProducts();
 
-    return res.json(products);
+    const meals = all.filter(food => food.dataValues.category === "Refeicao");
+    const desserts = all.filter(
+      food => food.dataValues.category === "Sobremesa"
+    );
+    const drinks = all.filter(food => food.dataValues.category === "Bebida");
+
+    console.log("products: ", all);
+    console.log("meals: ", meals);
+    console.log("desserts: ", desserts);
+    console.log("drinks: ", drinks);
+    return res.json({ meals, desserts, drinks, all });
   };
 
   getProductsByCategory = async (req: AuthenticatedRequest, res: Response) => {
