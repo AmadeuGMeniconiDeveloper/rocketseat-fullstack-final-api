@@ -24,7 +24,6 @@ const startServer = async () => {
   app.use(
     cors({
       origin: [
-        "https://main--foodexplorer-final.netlify.app",
         "https://foodexplorer-final.netlify.app",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
