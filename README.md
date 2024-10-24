@@ -6,7 +6,7 @@ As a challenge I chose to use Typescript as language of choise and PosgreSQL as 
 
 To run localy simply clone this repo and run `yarn` on terminal to get all dependencies.
 
-Then you'll need docker installed in your machine to fetch image/build container of the postgresql DB. Use `docker build -t rocketseat-fullstack-final-api-postgres .` to run the dockerfile then `docker run --name rocketseat-fullstack-final-api-db-container -d -p 5432:5432 rocketseat-fullstack-final-api-postgres`. Run `docker ps` to check if container is up and running.
+Then you'll need docker installed in your machine to fetch image/build container of the postgresql DB. Use `docker build -t rocketseat-fullstack-final-api-postgres .`. Run `docker ps` to check if container is up and running if not start it.
 
 # Deploy
 
